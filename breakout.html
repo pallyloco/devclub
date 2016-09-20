@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BreakOut</title>
+<script src="jquery-1.7.1.min.js"></script>
+<style type="text/css">
+#theCanvas
+{
+	border: 1px solid #000000;
+}
+</style>
+
+<script>
+
+$("document").ready(init);
+
+var x = 150;
+var y = 150;
+var dX = 2;
+var dY = 4;
+var WIDTH;
+var HEIGHT;
+var ctx;
+var paddlex;
+var paddleh;
+var paddlew;
+var rightDown = false;
+var leftDown = false;
+var intervalID;
+
+var canvasMinX;
+var canvasMaxX;
+
+function init_mouse()
+{
+	canvasMinX = $("#theCanvas").offset().left;
+	canvasMaxX = canvasMinX + WIDTH;
+}
+
+function onMouseMove(evt)
+{
+	if ( evt.pageX > canvasMinX && evt.pageX < canvasMaxX)
+	{
+		paddlex = evt.pageX - canvasMinX;
+	}
+}
+
+function onKeyDown(evt)
+{
+	if ( evt.keyCode == 39 )
+	{
+		rightDown = true;
+	}
+	else if ( evt.keyCode == 37 )
+	{
+		leftDown = true;
+	}
+}
+
+function onKeyUp(evt)
+{
+	if ( evt.keyCode == 39 )
+	{
+		rightDown = false;
+	}
+	else if ( evt.keyCode == 37 )
+	{
+		leftDown = false;
+	}
+}
+
+function initPaddle()
+{
+	paddlew = 100;
+	paddleh = 10;
+	paddlex = (WIDTH - paddlew)/2;
+}
+
+function draw()
+{
+	clear();
+	ctx.fillStyle = "#FF0000";
+	Circle(x, y, 10);
+	ctx.fillStyle = "#0000FF";
+	
+	if ( rightDown == true )
+	{
+		if ( paddlex + paddlew + 5 < WIDTH)
+		{
+			paddlex = paddlex + 5;
+		}
+	}
+	else if ( leftDown == true )
+	{
+		if ( paddlex - 5 > 0 )
+		{
+			paddlex = paddlex - 5;
+		}
+	}
+	Rectangle(paddlex, HEIGHT-paddleh-10, paddlew, paddleh);
+	
+	if ( x + dX + 10 > WIDTH || x + dX - 10 < 0 )
+	{
+		dX = -dX;
+	}
+	
+	if ( y < 0 )
+	{
+		dY = -dY;
+	}
+	else if ( y + dY - 20 > HEIGHT - paddleh - 30 )
+	{
+		if ( x > paddlex - 10 && x < paddlex + paddlew + 10)
+		{
+			dY = -dY;
+		}
+		else
+		{
+			clearInterval(intervalID);	
+		}
+	}
+	
+
+	x += dX;
+	y += dY;
+}
+
+function init()
+{
+	$(document).keydown(onKeyDown);
+	$(document).keyup(onKeyUp);
+	$(document).mousemove(onMouseMove);
+	
+	ctx = $("#theCanvas")[0].getContext("2d");
+	WIDTH = $("#theCanvas").width();
+	HEIGHT = $("#theCanvas").height();
+	initPaddle();
+	init_mouse();
+	intervalID = setInterval(draw, 10);
+}
+
+function clear()
+{
+	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+}
+
+function Circle(x, y, r)
+{
+	ctx.beginPath();
+	ctx.arc(x, y, r, 0, Math.PI*2, true);
+	ctx.closePath();
+	ctx.fill();
+}
+
+function Rectangle(x, y, w, h)
+{
+	ctx.beginPath();
+	ctx.rect(x, y, w, h);
+	ctx.closePath();
+	ctx.fill();
+}
+</script>
+
+</head>
+
+<body>
+
+<canvas id="theCanvas" width="800" height="500"></canvas>
+
+</body>
+</html>
