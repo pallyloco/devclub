@@ -3,32 +3,41 @@
 const CANVAS_NAME = "exampleCanvas"; 
 const ANIM_SPEED = 20;
 
+// canvas variables
 var canvasContext;
 var canvasMinX, canvasMinY, canvasMaxX, canvasMaxY;
 var canvas;
 
+// images
 var batImage;
+
+// the current path
 var path;
 
-
+/*
+ Initialize 
+ */
 function init() {
 
+    // initialize canvas
     canvas = document.getElementById(CANVAS_NAME);
     canvasMinX = canvas.offsetLeft;
     canvasMaxX = canvasMinX + canvas.width;
     canvasMinY = canvas.offsetTop;
     canvasMaxY = canvasMinY + canvas.height;
+    canvasContext = canvas.getContext('2d');
     
     batImage = new Image();
     batImage.src = "res/bat.png";
-    
-    canvasContext = canvas.getContext('2d');
     
     window.addEventListener("click", onMouseClick);
     
     setInterval(draw, ANIM_SPEED);
 }
 
+/*
+ onMouseClick - create a "bat" with a path
+ */
 function onMouseClick(event) {
     
     if(event.pageX > canvasMinX && event.pageX < canvasMaxX && event.pageY > canvasMinY && event.pageY < canvasMaxY) {
@@ -67,11 +76,19 @@ function onMouseClick(event) {
     }
 }
     
-        
+/* 
+ Draw - draw the path
+ */
 function draw() {
+
+    // only draw when a path is defined
     if(path) {
+        // clear the path image
         path.clear(canvasContext);
+        // draw the path image progressing by ANIM_SPEED
         path.draw(ANIM_SPEED, canvasContext);
+
+        // when the path is done, show it using points and reset the path for the next click event
         if(path.isOver()) {
             path.drawFinalPath(canvasContext);
             path = null;
