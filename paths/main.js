@@ -72,7 +72,7 @@ function onMouseClick(event) {
         var fy = function(t) { return t * Math.sin(t * max) };
         var f3 = construct2d(fx, fy,  start, end);
          
-        path = new Path(batImage, 100, 5000, f3, tangent); 
+        path = new Path(batImage, 100, 5000, f1, tangent); 
     }
 }
     
